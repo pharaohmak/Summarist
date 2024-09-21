@@ -3,15 +3,13 @@
 import { auth } from "@/firebase/init";
 import { onAuthStateChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";
-import Modal from "./Modal";
 import login from "@/app/assets/login.png"; // Make sure your build setup supports this
 import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toggleModal } from "@/redux/authSlice";
 
 const LoginWrapper: React.FC = () => {
-    const modalOpen = useSelector((state: any) => state.auth.modalOpen);
-    const [userSignedIn, setUserSignedIn] = useState<boolean>(false);
+    const [, setUserSignedIn] = useState<boolean>(false);
     const dispatch = useDispatch();
 
 

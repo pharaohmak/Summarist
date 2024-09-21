@@ -17,7 +17,7 @@ interface Book {
     subscriptionRequired: boolean; // Assuming this is the field for subscription status
 }
 
-const RecommendedBooks: React.FC<{ books: Book[] }> = ({ books }) => {
+const RecommendedBooks: React.FC<{ books: Book[] }> = () => {
     const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -72,7 +72,7 @@ const RecommendedBooks: React.FC<{ books: Book[] }> = ({ books }) => {
             ) : (
 
                 <div className="for-you__recommended--books">
-                    {recommendedBooks.map((book, index) => {
+                    {recommendedBooks.map((book) => {
                         return (
                             <Link href={`/book/${book.id}`} key={book.id}>
                                 <div className="for-you__recommended--books-link">

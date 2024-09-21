@@ -5,8 +5,6 @@ import { useAppSelector, useAppDispatch } from "@/redux/store"; // Adjust the pa
 import { fetchUserSuccess, userLogout } from "@/redux/userSlice"; // Import the necessary actions
 import { onAuthStateChanged } from "firebase/auth"; // Import Firebase auth
 import { auth } from "@/firebase/init"; // Import your Firebase auth instance
-import SearchBar from "@/app/components/SearchBar";
-import SideBar from "@/app/components/SideBar";
 import LoginWrapper from "@/app/components/LoginWrapper";
 
 const Settings: React.FC = () => {
@@ -24,7 +22,10 @@ const Settings: React.FC = () => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 // Fetch user data or update state accordingly
-                dispatch(fetchUserSuccess({ email: user.email || '', subscriptionStatus: 'premium-plus' }));
+                dispatch(fetchUserSuccess({
+                    email: user.email || '', subscriptionStatus: 'premium-plus',
+                    uid: ""
+                }));
             } else {
                 dispatch(userLogout());
             }

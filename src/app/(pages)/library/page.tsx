@@ -5,8 +5,6 @@ import { useAppSelector, useAppDispatch } from "@/redux/store"; // Adjust the pa
 import { fetchUserSuccess, userLogout } from "@/redux/userSlice"; // Import the necessary actions
 import { onAuthStateChanged } from "firebase/auth"; // Import Firebase auth
 import { auth } from "@/firebase/init"; // Import your Firebase auth instance
-import SearchBar from "@/app/components/SearchBar";
-import SideBar from "@/app/components/SideBar";
 import LoginWrapper from "@/app/components/LoginWrapper";
 import { NextPage } from "next";
 
@@ -17,7 +15,6 @@ const Library: NextPage = () => {
 
     // Access state from user slice
     const email = useAppSelector((state) => state.user.email);
-    const subscriptionStatus = useAppSelector((state) => state.user.subscriptionStatus);
     const loading = useAppSelector((state) => state.user.loading);
     const error = useAppSelector((state) => state.user.error);
     const isAuthenticated = !!email; // Check if user is authenticated
@@ -26,7 +23,10 @@ const Library: NextPage = () => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 // Fetch user data or update state accordingly
-                dispatch(fetchUserSuccess({ email: user.email || '', subscriptionStatus: 'premium-plus' }));
+                dispatch(fetchUserSuccess({
+                    email: user.email || '', subscriptionStatus: 'premium-plus',
+                    uid: ""
+                }));
             } else {
                 dispatch(userLogout());
             }

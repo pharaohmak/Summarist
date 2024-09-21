@@ -2,23 +2,25 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import logo from '@/app/assets/logo.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, toggleModal } from '@/redux/authSlice';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/firebase/init';
 import Modal from './Modal';
 import { fetchUserSuccess, userLogout } from '@/redux/userSlice';
 import { RootState, AppDispatch } from '@/redux/store';
+
 import SupportIcon from '../assets/icons/Support';
 import SettingsIcon from '../assets/icons/Settings';
-import Settings from '../assets/icons/Settings';
-import Support from '../assets/icons/Support';
 import Login from '../assets/icons/Login';
 import Search from '../assets/icons/Search';
 import Highlights from '../assets/icons/Highlights';
 import Library from '../assets/icons/Library';
 import Home from '../assets/icons/Home';
+
+// Define the prop types for SidebarLink
 interface SidebarLinkProps {
     href: string;
     icon: React.ReactNode;
@@ -27,29 +29,34 @@ interface SidebarLinkProps {
     onClick?: () => void;
 }
 
-const SidebarLink: React.FC<SidebarLinkProps> = ({ href, icon, text, disabled, onClick }) => (
-    <a
-        className={`sidebar__link--wrapper ${disabled ? 'sidebar__link--not-allowed' : ''}`}
+// Functional component for SidebarLink using React.FC and the defined props
+const SidebarLink: React.FC<SidebarLinkProps> = ({ href, icon, text, disabled = false, onClick }) => (
+    <Link
         href={disabled ? '#' : href}
         onClick={disabled ? undefined : onClick}
+        className={`sidebar__link--wrapper ${disabled ? 'sidebar__link--not-allowed' : ''}`}
     >
         <div className="sidebar__link--line"></div>
         {icon}
         <div className="sidebar__link--text">{text}</div>
-    </a>
+    </Link>
 );
 
 const SideBar: React.FC = () => {
-    const dispatch: AppDispatch = useDispatch();
-    const user = useSelector((state: RootState) => state.auth.user);
+    const dispatch = useDispatch<AppDispatch>();
     const modalOpen = useSelector((state: RootState) => state.auth.modalOpen);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, (user: FirebaseUser | null) => {
             if (user) {
-                const { uid, email, displayName } = user;
-                dispatch(fetchUserSuccess({ uid, email, displayName }));
+                const { uid, email } = user;
+                // Manually set a subscription status, or fetch from another source
+                dispatch(fetchUserSuccess({
+                    uid, 
+                    email: email ?? 'No email provided',
+                    subscriptionStatus: 'premium-plus', // Example static subscriptionStatus
+                }));
                 setIsUserLoggedIn(true);
             } else {
                 dispatch(userLogout());

@@ -92,7 +92,8 @@ const ChoosePlan: NextPage = () => {
                 </button>
               </span>
               <div className="plan__disclaimer">
-                Cancel your trial at any time before it ends, and you won't be charged.
+                Cancel your trial at any time before it ends, and you won&apos;t be charged.
+
               </div>
             </div>
 

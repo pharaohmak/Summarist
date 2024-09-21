@@ -1,8 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, User, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  User, 
+  signOut, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  sendPasswordResetEmail 
+} from 'firebase/auth';
 import { auth } from '@/firebase/init';
 import { AppThunk } from './store';
-import { fetchUser, fetchUserFailure, fetchUserStart, fetchUserSuccess } from './userSlice';
+import { fetchUser } from './userSlice';
+import { FirebaseError } from 'firebase/app';
 
 interface AuthState {
   user: User | null;
@@ -45,7 +54,10 @@ const authSlice = createSlice({
 });
 
 // Helper function to handle user authentication
-const handleUserAuth = async (dispatch: any, user: User) => {
+const handleUserAuth = async (
+  dispatch: (action: any) => void, 
+  user: User
+): Promise<void> => {
   dispatch(setUser(user));
   dispatch(fetchUser());
   window.location.href = '/for-you';
@@ -56,11 +68,12 @@ export const registerUser = (email: string, password: string): AppThunk => async
   try {
     const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
     dispatch(setUser(userCredentials.user));
-    // Optionally handle redirect after successful registration here
-  } catch (error: any) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.error("Error creating user:", errorMessage);
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      const errorMessage = error.message;
+      console.error("Error creating user:", errorMessage);
+      dispatch(setError(errorMessage));
+    }
   }
 };
 
@@ -69,65 +82,71 @@ export const userLogin = (email: string, password: string): AppThunk => async (d
   try {
     const userCredentials = await signInWithEmailAndPassword(auth, email, password);
     dispatch(setUser(userCredentials.user));
-    // Optionally handle redirect after successful login here
-  } catch (error: any) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.error("Error signing in:", errorMessage);
-
-    // Optionally handle specific errors
-    if (errorCode === 'auth/wrong-password') {
-      console.error('Wrong password.');
-    } else if (errorCode === 'auth/user-not-found') {
-      console.error('User not found.');
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      const errorMessage = error.message;
+      console.error("Error signing in:", errorMessage);
+      dispatch(setError(errorMessage));
     }
   }
 };
 
+// Guest login
 export const guestLogin = (): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const guestCredentials = await signInWithEmailAndPassword(auth, 'guest@gmail.com', 'guest123');
     handleUserAuth(dispatch, guestCredentials.user);
-  } catch (error: any) {
-    dispatch(setError('Error signing in as guest: ' + error.message));
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      dispatch(setError('Error signing in as guest: ' + error.message));
+    }
   }
 };
 
+// Google login
 export const googleLogin = (): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     handleUserAuth(dispatch, result.user);
-  } catch (error: any) {
-    dispatch(setError('Error signing in with Google: ' + error.message));
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      dispatch(setError('Error signing in with Google: ' + error.message));
+    }
   }
 };
 
+// Logout user
 export const logoutUser = (): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     await signOut(auth);
     dispatch(logout());
-  } catch (error: any) {
-    dispatch(setError('Error logging out: ' + error.message));
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      dispatch(setError('Error logging out: ' + error.message));
+    }
   }
 };
 
+// Reset password
 export const resetPassword = (email: string): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     await sendPasswordResetEmail(auth, email);
-    //  dispatch a success action to handle UI feedback
-  } catch (error: any) {
-    console.error("Error sending password reset email:", error.message);
-    dispatch(setError("Error sending password reset email"));
+  } catch (error: unknown) {
+    if (error instanceof FirebaseError) {
+      console.error("Error sending password reset email:", error.message);
+      dispatch(setError("Error sending password reset email"));
+    }
   } finally {
-    dispatch(setLoading(false)); // Always stop the loading state
+    dispatch(setLoading(false));
   }
 };
 
+// Export actions and selectors
 export const { setUser, logout, toggleModal, setLoading, setError } = authSlice.actions;
 
 export const selectAuthState = (state: { auth: AuthState }) => ({

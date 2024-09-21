@@ -3,10 +3,9 @@
 import Image from 'next/image';
 import React, { useEffect, useState, useCallback } from 'react';
 import google from "../assets/google.png";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { googleLogin, guestLogin, registerUser, resetPassword, toggleModal, userLogin, } from '@/redux/authSlice';
-import { AppDispatch, RootState } from '@/redux/store'; // Ensure type safety for dispatch and RootState
-import { auth } from '@/firebase/init';
+import { AppDispatch } from '@/redux/store'; // Ensure type safety for dispatch and RootState
 
 const Modal: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -15,7 +14,6 @@ const Modal: React.FC = () => {
     const [password, setPassword] = useState<string>('');
 
     // Access user and error state with proper typing
-    const user = useSelector((state: RootState) => state.auth.user);
 
     // Clear error on modal open/close or mode switch
     useEffect(() => {

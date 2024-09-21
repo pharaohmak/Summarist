@@ -1,9 +1,7 @@
 "use client";
 
-import Sidebar from '@/app/components/SideBar';
-import Search from '@/app/components/SearchBar'
 import type { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import axios from 'axios';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/firebase/init';
@@ -16,7 +14,7 @@ interface BookData {
     imageLink: string;
     author: string;
     duration: string;
-    [key: string]: any;
+    tags?: string[];
 }
 
 const Player: NextPage = () => {
@@ -24,13 +22,12 @@ const Player: NextPage = () => {
     const [bookData, setBookData] = useState<BookData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [user, setUser] = useState<any>(null);
+    const [, setUser] = useState<any>(null);
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [currentTime, setCurrentTime] = useState<number>(0);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
-        // Extract the book ID from the URL without using the Next.js router
         const urlParts = window.location.pathname.split('/');
         const id = urlParts[urlParts.length - 1]; // Assumes the ID is at the end of the URL
         setBookId(id);
@@ -42,11 +39,11 @@ const Player: NextPage = () => {
         const fetchBookData = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`https://us-central1-summaristt.cloudfunctions.net/getBook?id=${bookId}`);
-                setBookData(response.data);
-                setLoading(false);
+                const { data } = await axios.get<BookData>(`https://us-central1-summaristt.cloudfunctions.net/getBook?id=${bookId}`);
+                setBookData(data);
             } catch (err) {
-                setError('Failed to load book data.');
+                setError('Failed to load book data: ' + (err instanceof Error ? err.message : 'Unknown error'));
+            } finally {
                 setLoading(false);
             }
         };
@@ -55,14 +52,7 @@ const Player: NextPage = () => {
     }, [bookId]);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
-        });
-
+        const unsubscribe = onAuthStateChanged(auth, (user) => setUser(user || null));
         return () => unsubscribe();
     }, []);
 
@@ -74,58 +64,40 @@ const Player: NextPage = () => {
         };
 
         const audioElement = audioRef.current;
-        if (audioElement) {
-            audioElement.addEventListener('timeupdate', handleTimeUpdate);
-            return () => audioElement.removeEventListener('timeupdate', handleTimeUpdate);
-        }
+        audioElement?.addEventListener('timeupdate', handleTimeUpdate);
+        return () => {
+            audioElement?.removeEventListener('timeupdate', handleTimeUpdate);
+        };
     }, [isPlaying]);
 
-    useEffect(() => {
-        // Adjust the progress bar and time display
-        const updateProgressBar = () => {
-            if (audioRef.current) {
-                const duration = audioRef.current.duration;
-                const currentTime = audioRef.current.currentTime;
-                setCurrentTime(currentTime);
-            }
-        };
-
-        updateProgressBar(); // Initial update if the audio is already loaded
-    }, [bookData?.audioLink]);
-
-    const handlePlayPause = () => {
+    const handlePlayPause = useCallback(() => {
         if (audioRef.current) {
             if (isPlaying) {
                 audioRef.current.pause();
             } else {
                 audioRef.current.play();
             }
-            setIsPlaying(!isPlaying);
+            setIsPlaying(prev => !prev);
         }
-    };
+    }, [isPlaying]);
 
     const handleRewind = () => {
         if (audioRef.current) {
-            audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 10, 0); // Rewind 10 seconds
+            audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 10, 0);
         }
     };
 
     const handleForward = () => {
         if (audioRef.current) {
-            audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 10, audioRef.current.duration); // Forward 10 seconds
+            audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 10, audioRef.current.duration);
         }
     };
 
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+    if (!bookData) return <div>No data available</div>;
 
-    if (error) {
-        return <div>{error}</div>;
-    }
-
-    if (!bookData) {
-        return <div>No data available</div>;
-    }
-
-    const duration = audioRef.current ? audioRef.current.duration : 0;
+    const duration = audioRef.current?.duration || 0;
     const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
     return (
@@ -135,11 +107,11 @@ const Player: NextPage = () => {
                 <div className="audio__book--summary-text">{bookData.summary}</div>
             </div>
             <div className="audio__wrapper">
-                <audio ref={audioRef} src={bookData.audioLink} ></audio>
+                <audio ref={audioRef} src={bookData.audioLink} onLoadedData={() => setCurrentTime(0)} />
                 <div className="audio__track--wrapper">
                     <figure className="audio__track--image-mask">
-                        <figure className="book__image--wrapper" style={{ height: 48, width: 48, minWidth: 48 }}>
-                            <Image className="book__image" src={bookData.imageLink} alt="book" style={{ display: 'block' }} width={100} height={100} />
+                        <figure className="book__image--wrapper" style={{ height: 48, width: 48 }}>
+                            <Image className="book__image" src={bookData.imageLink} alt="book" width={100} height={100} />
                         </figure>
                     </figure>
                     <div className="audio__track--details-wrapper">
@@ -153,6 +125,7 @@ const Player: NextPage = () => {
                             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                                 <path fill="none" stroke="#000" strokeWidth="2" d="M3.11111111,7.55555556 C4.66955145,4.26701301 8.0700311,2 12,2 C17.5228475,2 22,6.4771525 22,12 C22,17.5228475 17.5228475,22 12,22 L12,22 C6.4771525,22 2,17.5228475 2,12 M2,4 L2,8 L6,8 M9,16 L9,9 L7,9.53333333 M17,12 C17,10 15.9999999,8.5 14.5,8.5 C13.0000001,8.5 12,10 12,12 C12,14 13,15.5000001 14.5,15.5 C16,15.4999999 17,14 17,12 Z M14.5,8.5 C16.9253741,8.5 17,11 17,12 C17,13 17,15.5 14.5,15.5 C12,15.5 12,13 12,12 C12,11 12.059,8.5 14.5,8.5 Z"></path>
                             </svg>
+
                         </button>
                         <button className="audio__controls--btn audio__controls--btn-play" onClick={handlePlayPause}>
                             {isPlaying ? (
@@ -188,7 +161,7 @@ const Player: NextPage = () => {
                             background: `linear-gradient(to right, rgb(43, 217, 124) ${progressPercent}%, rgb(109, 120, 125) ${progressPercent}%)`,
                         }}
                     />
-                    <div className="audio__time">{formatTime(audioRef.current ? audioRef.current.duration : 0)}</div>
+                    <div className="audio__time">{formatTime(duration)}</div>
                 </div>
             </div>
         </div>

@@ -49,7 +49,7 @@ const SearchBar: React.FC = () => {
         return () => {
             fetchSearchResults.cancel();
         };
-    }, []);
+    }, [fetchSearchResults]);
 
     return (
         <div className="search__background">

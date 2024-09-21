@@ -4,37 +4,47 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { auth, db } from '@/firebase/init';
 import { onAuthStateChanged } from 'firebase/auth';
-import SideBar from '@/app/components/SideBar';
-import SearchBar from '@/app/components/SearchBar';
 import { collection, addDoc } from 'firebase/firestore';
 import Image from 'next/image';
 
 import type { NextPage } from "next";
-import React from "react";
+
+interface BookData {
+    title: string;
+    author: string;
+    subTitle?: string;
+    averageRating?: number;
+    totalRating?: number;
+    keyIdeas?: string;
+    description?: string;
+    authorDescription?: string;
+    imageLink?: string;
+    subscriptionRequired?: boolean;
+    tags?: string[];
+}
 
 const InsideBook: NextPage = () => {
-    const [bookData, setBookData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const [bookData, setBookData] = useState<BookData | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<any>(null);
     const [bookId, setBookId] = useState<string | null>(null);
 
-    // Extract the book ID from the URL without using useRouter
     useEffect(() => {
         const pathSegments = window.location.pathname.split('/');
-        const id = pathSegments[pathSegments.length - 1]; // Assuming the ID is the last part of the URL
+        const id = pathSegments[pathSegments.length - 1];
         setBookId(id);
     }, []);
 
     useEffect(() => {
-        if (!bookId) return;
-
         const fetchBookData = async () => {
+            if (!bookId) return;
+
             try {
                 const response = await axios.get(`https://us-central1-summaristt.cloudfunctions.net/getBook?id=${bookId}`);
                 setBookData(response.data);
             } catch (err) {
-                setError('Failed to load book data.');
+                setError('Failed to load book data: ' + err);
             } finally {
                 setLoading(false);
             }
@@ -44,56 +54,44 @@ const InsideBook: NextPage = () => {
     }, [bookId]);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
+        const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+            setUser(user || null);
         });
 
         return () => unsubscribe();
     }, []);
 
-    const handleReadOrListen = (type: string) => {
+    const handleReadOrListen = () => {
         if (!user) {
-            // Show auth modal
             alert('Please log in to continue');
+            return;
+        }
+
+        if (bookData?.subscriptionRequired && !user?.subscriptionStatus) {
+            window.location.href = '/choose-plan';
         } else {
-            if (bookData?.subscriptionRequired && !user?.subscriptionStatus) {
-                // Redirect to the subscription plan page
-                window.location.href = '/choose-plan';
-            } else {
-                // Redirect to the player page
-                window.location.href = `/player/${bookId}`;
-            }
+            window.location.href = `/player/${bookId}`;
         }
     };
 
     const handleAddToLibrary = async () => {
         if (!user) {
-            // Show auth modal
             alert('Please log in to add to your library');
-        } else {
-            try {
-                // Assume `book` is an object containing the book details
-                const book = {
-                    title: bookData.title || "Unknown Title",
-                    author: bookData.author || "Unknown Author",
-                    // Add other book details here
-                };
+            return;
+        }
 
-                // Reference to the user's library collection
-                const libraryRef = collection(db, 'users', user.uid, 'library');
+        try {
+            const book = {
+                title: bookData?.title || "Unknown Title",
+                author: bookData?.author || "Unknown Author",
+            };
 
-                // Add the book to the Firestore collection
-                await addDoc(libraryRef, book);
-
-                alert('Book added to your library!');
-            } catch (error) {
-                console.error('Error adding book to library:', error);
-                alert('Failed to add the book to your library. Please try again.');
-            }
+            const libraryRef = collection(db, 'users', user.uid, 'library');
+            await addDoc(libraryRef, book);
+            alert('Book added to your library!');
+        } catch (error) {
+            console.error('Error adding book to library:', error);
+            alert('Failed to add the book to your library. Please try again.');
         }
     };
 
@@ -103,60 +101,52 @@ const InsideBook: NextPage = () => {
     return (
         <div className="inner__wrapper">
             <div className="inner__book">
-                <div className="inner-book__title">{bookData?.title || 'Unknown Title'}</div>
-                <div className="inner-book__author">{bookData?.author || 'Unknown Author'}</div>
-                <div className="inner-book__sub--title">{bookData?.subTitle || 'No Subtitle'}</div>
+                <h1 className="inner-book__title">{bookData?.title || 'Unknown Title'}</h1>
+                <h2 className="inner-book__author">{bookData?.author || 'Unknown Author'}</h2>
+                <h3 className="inner-book__sub--title">{bookData?.subTitle || 'No Subtitle'}</h3>
                 <div className="inner-book__wrapper">
                     <div className="inner-book__description--wrapper">
                         <div className="inner-book__description">
-                            <div className="inner-book__overall--rating">{bookData?.averageRating || 'N/A'}&nbsp;</div>
-                            <div className="inner-book__total--rating">({bookData?.totalRating || 0}&nbsp;ratings)</div>
+                            <span className="inner-book__overall--rating">{bookData?.averageRating || 'N/A'}</span>
+                            <span className="inner-book__total--rating">({bookData?.totalRating || 0} ratings)</span>
                         </div>
                         <div className="inner-book__description">
-                            <div className="inner-book__duration">03:24</div>
+                            <span className="inner-book__duration">03:24</span>
                         </div>
                         <div className="inner-book__description">
-                            <div className="inner-book__type">Audio &amp; Text</div>
+                            <span className="inner-book__type">Audio &amp; Text</span>
                         </div>
                         <div className="inner-book__description">
-                            <div className="inner-book__key--ideas">{bookData?.keyIdeas || 'N/A'} Key ideas</div>
+                            <span className="inner-book__key--ideas">{bookData?.keyIdeas || 'N/A'} Key ideas</span>
                         </div>
                     </div>
                 </div>
                 <div className="inner-book__read--btn-wrapper">
-                    <button
-                        className="inner-book__read--btn"
-                        onClick={() => handleReadOrListen('read')}
-                    >
+                    <button className="inner-book__read--btn" onClick={handleReadOrListen}>
                         Read
                     </button>
-                    <button
-                        className="inner-book__read--btn"
-                        onClick={() => handleReadOrListen('listen')}
-                    >
+                    <button className="inner-book__read--btn" onClick={handleReadOrListen}>
                         Listen
                     </button>
                 </div>
                 <div className="inner-book__bookmark" onClick={handleAddToLibrary}>
-                    <div className="inner-book__bookmark--text">
-                        Add title to My Library
-                    </div>
+                    <span className="inner-book__bookmark--text">Add title to My Library</span>
                 </div>
-                <div className="inner-book__secondary--title">What's it about?</div>
+                <h4 className="inner-book__secondary--title">What&apos;s it about?</h4>
                 <div className="inner-book__tags--wrapper">
-                    {bookData?.tags?.length > 0 ? bookData.tags.map((tag: string) => (
-                        <div className="inner-book__tag" key={tag}>
-                            {tag}
-                        </div>
-                    )) : <div>No tags available</div>}
+                    {bookData?.tags && bookData.tags.length > 0 ? (
+                        bookData.tags.map((tag) => (
+                            <span className="inner-book__tag" key={tag}>
+                                {tag}
+                            </span>
+                        ))
+                    ) : (
+                        <div>No tags available</div>
+                    )}
                 </div>
-                <div className="inner-book__book--description">
-                    {bookData?.description || 'No description available'}
-                </div>
+                <p className="inner-book__book--description">{bookData?.description || 'No description available'}</p>
                 <h2 className="inner-book__secondary--title">About the author</h2>
-                <div className="inner-book__author--description">
-                    {bookData?.authorDescription || 'No author description available'}
-                </div>
+                <p className="inner-book__author--description">{bookData?.authorDescription || 'No author description available'}</p>
             </div>
             <div className="inner-book--img-wrapper">
                 <figure className="book__image--wrapper" style={{ height: 300, width: 300, minWidth: 300 }}>
@@ -164,14 +154,13 @@ const InsideBook: NextPage = () => {
                         className="book__image"
                         src={bookData?.imageLink || '/default-image.jpg'}
                         alt={bookData?.title || 'Book Image'}
-                        style={{ display: 'block' }}
                         width={300}
                         height={300}
                     />
                 </figure>
             </div>
         </div>
-    )
+    );
 }
 
 export default InsideBook;
