@@ -1,10 +1,10 @@
 "use client";
 
-import Image from 'next/image';
+// import Image from 'next/image';
 import React, { useEffect, useState, useCallback } from 'react';
-import google from "../assets/google.png";
+// import google from "../assets/google.png";
 import { useDispatch } from 'react-redux';
-import { googleLogin, guestLogin, registerUser, resetPassword, toggleModal, userLogin, } from '@/redux/authSlice';
+import { guestLogin, registerUser, resetPassword, toggleModal, userLogin, } from '@/redux/authSlice';
 import { AppDispatch } from '@/redux/store'; // Ensure type safety for dispatch and RootState
 
 const Modal: React.FC = () => {
