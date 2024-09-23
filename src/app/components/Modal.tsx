@@ -75,7 +75,7 @@ const Modal: React.FC = () => {
                         </>
                     )}
 
-                    <button
+                    {/* <button
                         className="btn google__btn--wrapper"
                         onClick={() => dispatch(googleLogin())}
                     >
@@ -95,7 +95,7 @@ const Modal: React.FC = () => {
 
                     <div className="auth__separator">
                         <span className="auth__separator--text">or</span>
-                    </div>
+                    </div> */}
 
                     <form className="auth__main--form" onSubmit={handleFormSubmit}>
                         <input
