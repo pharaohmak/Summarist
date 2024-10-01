@@ -39,12 +39,12 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.subscriptionStatus = action.payload.subscriptionStatus;
       state.loading = false;
-      state.isAuthenticated = true;
+      state.isAuthenticated = true; // User is authenticated after fetching success
     },
     fetchUserFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
-      state.isAuthenticated = false;
+      state.isAuthenticated = false; // Failure means no authenticated user
     },
     userLogout: (state) => {
       state.uid = null;
@@ -52,7 +52,7 @@ const userSlice = createSlice({
       state.subscriptionStatus = '';
       state.loading = false;
       state.error = null;
-      state.isAuthenticated = false;
+      state.isAuthenticated = false; // User is logged out
     },
     updateSubscriptionStatus: (state, action: PayloadAction<string>) => {
       state.subscriptionStatus = action.payload;
@@ -68,18 +68,20 @@ export const fetchUser = createAsyncThunk(
     try {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
-          const subscriptionStatus = user.email?.startsWith('guest') ? 'Free' : '';
+          // Set subscription status dynamically based on email or other criteria
+          const subscriptionStatus = user.email?.startsWith('guest') ? 'Free' : 'Premium'; // Update this logic based on actual subscription data
+          
           dispatch(fetchUserSuccess({
             uid: user.uid,
             email: user.email || '',
             subscriptionStatus
           }));
         } else {
-          dispatch(userLogout());
+          dispatch(userLogout()); // No user means logout
         }
       });
 
-      return unsubscribe; // Ensure cleanup
+      return unsubscribe; // Cleanup listener when done
     } catch (error) {
       if (error instanceof Error) {
         dispatch(fetchUserFailure('Failed to load user data: ' + error.message));

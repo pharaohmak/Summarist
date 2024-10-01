@@ -39,32 +39,32 @@ const ForYou: NextPage = () => {
 
     if (isLoading || loading) {
         return (
-            <div className="row">
             <div className="container">
-                <div className="for-you__wrapper">
-                    {/* Selected for You Section */}
-                    <div className="for-you__title">Selected just for you</div>
-                    <div className="selected__book--skeleton"></div>
+                <div className="row">
+                    <div className="for-you__wrapper">
+                        {/* Selected for You Section */}
+                        <div className="for-you__title">Selected just for you</div>
+                        <div className="selected__book--skeleton"></div>
 
-                    {/* Recommended For You Section */}
-                    <div>
-                        <div className="for-you__title">Recommended For You</div>
-                        <div className="for-you__sub--title">We think you’ll like these</div>
-                        <div className="recommended__books--skeleton-wrapper">
-                            {[...Array(5)].map((_, index) => (
-                                <div key={index} className="recommended__books--skeleton">
-                                    <div className="skeleton" style={{ width: '100%', height: '240px', marginBottom: '8px' }}></div>
-                                    <div className="skeleton" style={{ width: '100%', height: '20px', marginBottom: '8px' }}></div>
-                                    <div className="skeleton" style={{ width: '90%', height: '16px', marginBottom: '8px' }}></div>
-                                    <div className="skeleton" style={{ width: '80%', height: '32px', marginBottom: '8px' }}></div>
-                                    <div className="skeleton" style={{ width: '90%', height: '16px' }}></div>
-                                </div>
-                            ))}
+                        {/* Recommended For You Section */}
+                        <div>
+                            <div className="for-you__title">Recommended For You</div>
+                            <div className="for-you__sub--title">We think you’ll like these</div>
+                            <div className="recommended__books--skeleton-wrapper">
+                                {[...Array(5)].map((_, index) => (
+                                    <div key={index} className="recommended__books--skeleton">
+                                        <div className="skeleton" style={{ width: '100%', height: '240px', marginBottom: '8px' }}></div>
+                                        <div className="skeleton" style={{ width: '100%', height: '20px', marginBottom: '8px' }}></div>
+                                        <div className="skeleton" style={{ width: '90%', height: '16px', marginBottom: '8px' }}></div>
+                                        <div className="skeleton" style={{ width: '80%', height: '32px', marginBottom: '8px' }}></div>
+                                        <div className="skeleton" style={{ width: '90%', height: '16px' }}></div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div>
+                <div>
                     <div className="for-you__title">Suggested Books</div>
                     <div className="for-you__sub--title">Browse those books</div>
                     <div className="recommended__books--skeleton-wrapper">
@@ -79,8 +79,8 @@ const ForYou: NextPage = () => {
                         ))}
                     </div>
                 </div>
-        </div>
-        
+            </div>
+
 
         )
     }
@@ -98,9 +98,14 @@ const ForYou: NextPage = () => {
 
     return (
         <div className="for-you__wrapper">
-            <Selected />
-            <RecommendedBooks books={[]} />
-            <SuggestedBooks />
+            <div className="container">
+                <div className="row">
+
+                    <Selected />
+                    <RecommendedBooks books={[]} />
+                    <SuggestedBooks />
+                </div>
+            </div>
         </div>
     );
 };

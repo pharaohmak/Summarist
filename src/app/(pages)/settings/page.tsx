@@ -1,49 +1,34 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "@/redux/store"; // Adjust the path if necessary
-import { fetchUserSuccess, userLogout } from "@/redux/userSlice"; // Import the necessary actions
-import { onAuthStateChanged } from "firebase/auth"; // Import Firebase auth
-import { auth } from "@/firebase/init"; // Import your Firebase auth instance
+import { fetchUser } from "@/redux/userSlice"; // Import the async thunk to fetch the user data
 import LoginWrapper from "@/app/components/LoginWrapper";
 
 const Settings: React.FC = () => {
   const dispatch = useAppDispatch();
-  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   // Access state from user slice
   const email = useAppSelector((state) => state.user.email);
   const subscriptionStatus = useAppSelector((state) => state.user.subscriptionStatus);
   const loading = useAppSelector((state) => state.user.loading);
   const error = useAppSelector((state) => state.user.error);
-  const isAuthenticated = !!email; // Check if user is authenticated
+  const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated);
 
+  // Dispatch fetchUser to get the authenticated user on component mount
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Fetch user data or update state accordingly
-        dispatch(
-          fetchUserSuccess({
-            email: user.email || "",
-            subscriptionStatus: subscriptionStatus || "Free",
-            uid: user.uid,
-          })
-        );
-      } else {
-        dispatch(userLogout());
-      }
-      setIsLoading(false); // Stop loading after the auth check
-    });
+    dispatch(fetchUser());
+  }, [dispatch]);
 
-    return () => unsubscribe(); // Cleanup the listener
-  }, [dispatch, subscriptionStatus]);
+  // Log to check if authentication state changes correctly
+  useEffect(() => {
+    console.log("isAuthenticated:", isAuthenticated);
+    console.log("loading:", loading);
+    console.log("email:", email);
+  }, [isAuthenticated, loading, email]);
 
-  // Alternative navigation using window.location
-  const handleUpgradeClick = () => {
-    window.location.href = "/choose-plan"; // Navigate to the "Choose Plan" page
-  };
-
-  if (isLoading || loading) {
+  // Render loading skeleton while user data is being fetched
+  if (loading) {
     return (
       <div className="skeleton-wrapper settings-content">
         <h1 className="section__title page__title">Settings</h1>
@@ -56,10 +41,12 @@ const Settings: React.FC = () => {
     );
   }
 
+  // Render error message if there was an error fetching user data
   if (error) {
     return <div>Error: {error}</div>;
   }
 
+  // If not authenticated, show login wrapper
   if (!isAuthenticated) {
     return (
       <div className="container">
@@ -70,6 +57,7 @@ const Settings: React.FC = () => {
     );
   }
 
+  // Render settings page when the user is authenticated and data is ready
   return (
     <>
       <h1 className="section__title page__title">Settings</h1>
@@ -78,9 +66,9 @@ const Settings: React.FC = () => {
         <h2 className="settings__sub--title">Your Subscription Plan</h2>
         <p className="settings__text">{subscriptionStatus || "None"}</p>
 
-        {/* Conditionally render the "Upgrade Plan" button */}
+        {/* Conditionally show the "Upgrade Plan" button if the subscription is "Free" */}
         {!subscriptionStatus || subscriptionStatus === "Free" ? (
-          <button className="btn btn--upgrade" onClick={handleUpgradeClick}>
+          <button className="btn btn--upgrade w-50 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:from-blue-500 hover:to-green-400 transition duration-300 transform hover:scale-105" onClick={() => (window.location.href = "/choose-plan")}>
             Upgrade Plan
           </button>
         ) : (
