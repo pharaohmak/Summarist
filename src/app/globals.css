@@ -11,11 +11,6 @@
   font-family: Roboto, sans-serif
 }
 
-body {
-  max-width: 100%;
-  overflow-x: hidden
-}
-
 a {
   text-decoration: none;
   color: inherit
@@ -83,6 +78,10 @@ input {
   align-items: center;
   justify-content: center;
   min-width: 180px
+}
+
+.btn--checkout {
+  cursor: not-allowed;
 }
 
 .btn:hover:not(:disabled) {
@@ -1599,7 +1598,8 @@ input {
 }
 
 .settings__text {
-  color: #032b41
+  color: #032b41;
+  text-align: center;
 }
 
 .btn.settings__upgrade--btn {
@@ -1750,7 +1750,7 @@ input {
   gap: 8px;
   color: #0365f2;
   font-weight: 500;
-  cursor: pointer;
+  cursor: not-allowed;
   margin-bottom: 40px;
   font-size: 18px;
   transition: color .2s
@@ -1908,7 +1908,8 @@ input {
 .audio__book--summary-text {
   white-space: pre-line;
   line-height: 1.4;
-  color: #032b41
+  color: #032b41;
+  margin-bottom: 100px;
 }
 
 .audio__track--wrapper {
@@ -2330,3 +2331,6 @@ input {
   }
 }
 
+.btn--upgrade {
+  width: 15%;
+}

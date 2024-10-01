@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth, db } from '@/firebase/init';
+import { auth  } from '@/firebase/init';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, addDoc } from 'firebase/firestore';
 import Image from 'next/image';
 
 import type { NextPage } from "next";
@@ -74,26 +73,26 @@ const InsideBook: NextPage = () => {
         }
     };
 
-    const handleAddToLibrary = async () => {
-        if (!user) {
-            alert('Please log in to add to your library');
-            return;
-        }
+    // const handleAddToLibrary = async () => {
+    //     if (!user) {
+    //         alert('Please log in to add to your library');
+    //         return;
+    //     }
 
-        try {
-            const book = {
-                title: bookData?.title || "Unknown Title",
-                author: bookData?.author || "Unknown Author",
-            };
+    //     try {
+    //         const book = {
+    //             title: bookData?.title || "Unknown Title",
+    //             author: bookData?.author || "Unknown Author",
+    //         };
 
-            const libraryRef = collection(db, 'users', user.uid, 'library');
-            await addDoc(libraryRef, book);
-            alert('Book added to your library!');
-        } catch (error) {
-            console.error('Error adding book to library:', error);
-            alert('Failed to add the book to your library. Please try again.');
-        }
-    };
+    //         const libraryRef = collection(db, 'users', user.uid, 'library');
+    //         await addDoc(libraryRef, book);
+    //         alert('Book added to your library!');
+    //     } catch (error) {
+    //         console.error('Error adding book to library:', error);
+    //         alert('Failed to add the book to your library. Please try again.');
+    //     }
+    // };
 
     if (loading) return <div>Loading book data...</div>;
     if (error) return <div className="error-message">{error}</div>;
@@ -129,7 +128,7 @@ const InsideBook: NextPage = () => {
                         Listen
                     </button>
                 </div>
-                <div className="inner-book__bookmark" onClick={handleAddToLibrary}>
+                <div className="inner-book__bookmark">
                     <span className="inner-book__bookmark--text">Add title to My Library</span>
                 </div>
                 <h4 className="inner-book__secondary--title">What&apos;s it about?</h4>

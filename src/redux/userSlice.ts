@@ -16,7 +16,7 @@ interface UserState {
 const initialState: UserState = {
   uid: null,
   email: '',
-  subscriptionStatus: '', // Define subscription status separately
+  subscriptionStatus: '',
   loading: false,
   error: null,
   isAuthenticated: false,
@@ -31,10 +31,13 @@ const userSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchUserSuccess: (state, action: PayloadAction<{ uid: string; email: string; subscriptionStatus: string }>) => {
+    fetchUserSuccess: (
+      state, 
+      action: PayloadAction<{ uid: string; email: string; subscriptionStatus: string }>
+    ) => {
       state.uid = action.payload.uid;
       state.email = action.payload.email;
-      state.subscriptionStatus = action.payload.subscriptionStatus; // Set subscription status manually or after fetching
+      state.subscriptionStatus = action.payload.subscriptionStatus;
       state.loading = false;
       state.isAuthenticated = true;
     },
@@ -51,6 +54,9 @@ const userSlice = createSlice({
       state.error = null;
       state.isAuthenticated = false;
     },
+    updateSubscriptionStatus: (state, action: PayloadAction<string>) => {
+      state.subscriptionStatus = action.payload;
+    },
   },
 });
 
@@ -62,10 +68,11 @@ export const fetchUser = createAsyncThunk(
     try {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
-          dispatch(fetchUserSuccess({ 
-            uid: user.uid, 
-            email: user.email || '', 
-            subscriptionStatus: 'premium-plus' // Example static subscriptionStatus
+          const subscriptionStatus = user.email?.startsWith('guest') ? 'Free' : '';
+          dispatch(fetchUserSuccess({
+            uid: user.uid,
+            email: user.email || '',
+            subscriptionStatus
           }));
         } else {
           dispatch(userLogout());
@@ -74,12 +81,16 @@ export const fetchUser = createAsyncThunk(
 
       return unsubscribe; // Ensure cleanup
     } catch (error) {
-      dispatch(fetchUserFailure('Failed to load user data.' + error));
+      if (error instanceof Error) {
+        dispatch(fetchUserFailure('Failed to load user data: ' + error.message));
+      } else {
+        dispatch(fetchUserFailure('An unknown error occurred.'));
+      }
     }
   }
 );
 
 // Export Actions and Reducer
-export const { fetchUserStart, fetchUserSuccess, fetchUserFailure, userLogout } = userSlice.actions;
+export const { fetchUserStart, fetchUserSuccess, fetchUserFailure, userLogout, updateSubscriptionStatus } = userSlice.actions;
 export const selectUserState = (state: { user: UserState }) => state.user;
 export default userSlice.reducer;

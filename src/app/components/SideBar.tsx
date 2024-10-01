@@ -89,7 +89,7 @@ const SideBar: React.FC = () => {
                 <div className="sidebar__wrapper">
                     <div className="sidebar__top">
                         <SidebarLink href="/for-you" icon={<Home />} text="For you" />
-                        <SidebarLink href="/library" icon={<Library />} text="My Library" />
+                        <SidebarLink href="#" icon={<Library />} text="My Library" disabled />
                         <SidebarLink href="#" icon={<Highlights />} text="Highlights" disabled />
                         <SidebarLink href="#" icon={<Search />} text="Search" disabled />
                     </div>

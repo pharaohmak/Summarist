@@ -1,25 +1,23 @@
 "use client"
 import type { NextPage } from "next";
 import { useState } from 'react';
-import { getCheckoutUrl } from "@/firebase/stripe";
-import { app } from "@/firebase/init";
+// import { getCheckoutUrl } from "@/firebase/stripe";
+// import { app } from "@/firebase/init";
 import Image from 'next/image';
 import pricing from '@/app/assets/pricing-top.png';
-// import Footer from '../components/Footer';
-// import Faqs from '@/components/choose-/Faqs';
 
 const ChoosePlan: NextPage = () => {
     const [plan, setPlan] = useState<'Yearly' | 'Monthly'>('Yearly');
 
-    const checkout = async () => {
-      try {
-        const priceId = plan === 'Yearly' ? 'price_1O5JOQBJ6haLOo7PQmSKlrTp' : 'price_1O5JO8BJ6haLOo7PbM932ELv';
-        const checkoutUrl = await getCheckoutUrl(app, priceId);
-        window.location.href = checkoutUrl;
-      } catch (error) {
-        console.error('Error during checkout:', error);
-      }
-    };
+    // const checkout = async () => {
+    //   try {
+    //     const priceId = plan === 'Yearly' ? 'price_1O5JOQBJ6haLOo7PQmSKlrTp' : 'price_1O5JO8BJ6haLOo7PbM932ELv';
+    //     const checkoutUrl = await getCheckoutUrl(app, priceId);
+    //     window.location.href = checkoutUrl;
+    //   } catch (error) {
+    //     console.error('Error during checkout:', error);
+    //   }
+    // };
 
     return (
         <div className="wrapper wrapper__full">
@@ -87,7 +85,7 @@ const ChoosePlan: NextPage = () => {
 
             <div className="plan__card--cta">
               <span className="btn--wrapper">
-                <button onClick={checkout} className="btn" style={{ width: "300px" }}>
+                <button className="btn btn--checkout" style={{ width: "300px" }}>
                   <span>Start your free 7-day trial</span>
                 </button>
               </span>
@@ -97,12 +95,9 @@ const ChoosePlan: NextPage = () => {
               </div>
             </div>
 
-            <div className="section__title">FAQs</div>
             {/* FAQ Section */}
-            {/* <Faqs /> */}
           </div>
         </div>
-        {/* <Footer /> */}
       </div>
     </div>
   );

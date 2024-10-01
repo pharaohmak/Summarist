@@ -8,76 +8,92 @@ import { auth } from "@/firebase/init"; // Import your Firebase auth instance
 import LoginWrapper from "@/app/components/LoginWrapper";
 
 const Settings: React.FC = () => {
-    const dispatch = useAppDispatch();
-    const [isLoading, setIsLoading] = useState(true); // Loading state
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
-    // Access state from user slice
-    const email = useAppSelector((state) => state.user.email);
-    const subscriptionStatus = useAppSelector((state) => state.user.subscriptionStatus);
-    const loading = useAppSelector((state) => state.user.loading);
-    const error = useAppSelector((state) => state.user.error);
-    const isAuthenticated = !!email; // Check if user is authenticated
+  // Access state from user slice
+  const email = useAppSelector((state) => state.user.email);
+  const subscriptionStatus = useAppSelector((state) => state.user.subscriptionStatus);
+  const loading = useAppSelector((state) => state.user.loading);
+  const error = useAppSelector((state) => state.user.error);
+  const isAuthenticated = !!email; // Check if user is authenticated
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Fetch user data or update state accordingly
-                dispatch(fetchUserSuccess({
-                    email: user.email || '', subscriptionStatus: 'premium-plus',
-                    uid: ""
-                }));
-            } else {
-                dispatch(userLogout());
-            }
-            setIsLoading(false); // Stop loading after the auth check
-        });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Fetch user data or update state accordingly
+        dispatch(
+          fetchUserSuccess({
+            email: user.email || "",
+            subscriptionStatus: subscriptionStatus || "Free",
+            uid: user.uid,
+          })
+        );
+      } else {
+        dispatch(userLogout());
+      }
+      setIsLoading(false); // Stop loading after the auth check
+    });
 
-        return () => unsubscribe(); // Cleanup the listener
-    }, [dispatch]);
+    return () => unsubscribe(); // Cleanup the listener
+  }, [dispatch, subscriptionStatus]);
 
-    if (isLoading || loading) {
-        return (
-            <div className="skeleton-wrapper settings-content">
-                <h1 className="section__title page__title">Settings</h1>
-                <div className="skeleton skeleton-title"></div>
-                <div className="skeleton skeleton-text"></div>
-                <div className="skeleton skeleton-text"></div>
-                <div className="skeleton skeleton-text"></div>
-                <div className="skeleton skeleton-button"></div>
-            </div>
+  // Alternative navigation using window.location
+  const handleUpgradeClick = () => {
+    window.location.href = "/choose-plan"; // Navigate to the "Choose Plan" page
+  };
 
-        )
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (!isAuthenticated) {
-        return (
-            <div className="container">
-                <div className="row">
-                    <LoginWrapper />
-
-                </div>
-            </div>
-        )
-    }
-
+  if (isLoading || loading) {
     return (
-        <>
-            <h1 className="section__title page__title">Settings</h1>
-
-            <div className="setting__content">
-                <h2 className="settings__sub--title">Your Subscription Plan</h2>
-                <p className="settings__text">{subscriptionStatus}</p>
-            </div>
-            <div className="setting__content">
-                <h2 className="settings__sub--title">Email</h2>
-                <p className="settings__text">{email}</p>
-            </div>
-        </>
+      <div className="skeleton-wrapper settings-content">
+        <h1 className="section__title page__title">Settings</h1>
+        <div className="skeleton skeleton-title"></div>
+        <div className="skeleton skeleton-text"></div>
+        <div className="skeleton skeleton-text"></div>
+        <div className="skeleton skeleton-text"></div>
+        <div className="skeleton skeleton-button"></div>
+      </div>
     );
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="container">
+        <div className="row">
+          <LoginWrapper />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <h1 className="section__title page__title">Settings</h1>
+
+      <div className="setting__content">
+        <h2 className="settings__sub--title">Your Subscription Plan</h2>
+        <p className="settings__text">{subscriptionStatus || "None"}</p>
+
+        {/* Conditionally render the "Upgrade Plan" button */}
+        {!subscriptionStatus || subscriptionStatus === "Free" ? (
+          <button className="btn btn--upgrade" onClick={handleUpgradeClick}>
+            Upgrade Plan
+          </button>
+        ) : (
+          <p>You are on the {subscriptionStatus} plan.</p>
+        )}
+      </div>
+
+      <div className="setting__content">
+        <h2 className="settings__sub--title">Email</h2>
+        <p className="settings__text">{email}</p>
+      </div>
+    </>
+  );
 };
 
 export default Settings;

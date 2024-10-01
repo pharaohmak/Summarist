@@ -41,16 +41,15 @@ const SearchBar: React.FC = () => {
     const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
         const search = e.target.value;
         setSearchTerm(search);
-        fetchSearchResults(search);
+        fetchSearchResults(search); // Fetch results as user types
     };
 
     // Cleanup debounce on component unmount
     useEffect(() => {
         return () => {
-            fetchSearchResults.cancel();
+            fetchSearchResults.cancel(); // Clean up the debounce function
         };
     }, [fetchSearchResults]);
-
     return (
         <div className="search__background">
             <div className="search__wrapper">
@@ -67,7 +66,6 @@ const SearchBar: React.FC = () => {
                             />
                             <div
                                 className="search__icon"
-                                onClick={() => fetchSearchResults(searchTerm)} // This won't be called if searchTerm is empty
                             >
                                 <svg
                                     stroke="currentColor"
