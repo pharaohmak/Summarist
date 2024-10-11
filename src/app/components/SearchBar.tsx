@@ -17,10 +17,9 @@ const SearchBar: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [searchResults, setSearchResults] = useState<Book[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false); // State for dropdown menu
-    const dropdownRef = useRef<HTMLDivElement | null>(null); // Ref for dropdown
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-    // Debounced function to fetch search results
     const fetchSearchResults = debounce(async (search: string) => {
         if (search) {
             setLoading(true);
@@ -31,7 +30,7 @@ const SearchBar: React.FC = () => {
                 setSearchResults(response.data);
             } catch (error) {
                 console.error("Error fetching search results:", error);
-                setSearchResults([]); // Clear results on error
+                setSearchResults([]);
             } finally {
                 setLoading(false);
             }
@@ -40,27 +39,23 @@ const SearchBar: React.FC = () => {
         }
     }, 500);
 
-    // Handle search input change
     const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
         const search = e.target.value;
         setSearchTerm(search);
-        fetchSearchResults(search); // Fetch results as user types
+        fetchSearchResults(search);
     };
 
-    // Cleanup debounce on component unmount
     useEffect(() => {
-        fetchSearchResults(searchTerm); // Ensure immediate fetch on component mount
+        fetchSearchResults(searchTerm);
         return () => {
-            fetchSearchResults.cancel(); // Clean up the debounce function
+            fetchSearchResults.cancel();
         };
     }, [searchTerm]);
 
-    // Toggle dropdown menu visibility
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -74,16 +69,14 @@ const SearchBar: React.FC = () => {
         };
     }, []);
 
-    // Close dropdown when a link is clicked
     const handleLinkClick = () => {
-        setIsDropdownOpen(false); // Close dropdown
+        setIsDropdownOpen(false);
     };
 
     return (
         <div className="search__background">
             <div className="search__wrapper">
                 <div className="relative">
-                    {/* Burger Menu Button */}
                     <button
                         className="burger-menu md:hidden block text-gray-700 focus:outline-none mb-4"
                         onClick={toggleDropdown}
@@ -93,7 +86,6 @@ const SearchBar: React.FC = () => {
                         </svg>
                     </button>
 
-                    {/* Dropdown Menu */}
                     {isDropdownOpen && (
                         <div ref={dropdownRef} className="absolute bg-white shadow-md rounded-lg z-10 w-48">
                             <Link href="/for-you" className="block px-4 py-2 text-gray-800 hover:bg-gray-200" onClick={handleLinkClick}>

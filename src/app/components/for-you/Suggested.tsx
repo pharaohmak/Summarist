@@ -16,7 +16,6 @@ interface Book {
     subscriptionRequired: boolean;
 }
 
-
 const SuggestedBooks: React.FC = () => {
     const [suggestedBooks, setSuggestedBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -67,8 +66,8 @@ const SuggestedBooks: React.FC = () => {
                                 )}
                                 <audio src={book.audioLink}></audio>
                                 <figure className="book__image--wrapper" style={{ marginBottom: "8px" }}>
-                                    <Image className="book__image" src={book.imageLink} alt="book" style={{ display: "block" }} width={100} height={100}/>
-                            
+                                    <Image className="book__image" src={book.imageLink} alt="book" style={{ display: "block" }} width={100} height={100} />
+
                                 </figure>
                                 <div className="recommended__book--title">{book.title}</div>
                                 <div className="recommended__book--author">{book.author}</div>

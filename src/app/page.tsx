@@ -13,7 +13,7 @@ import Modal from "./components/Modal";
 
 export default function Home() {
   const dispatch = useDispatch();
-  const modalOpen = useSelector((state: any) => state.auth.modalOpen); // Access modal state
+  const modalOpen = useSelector((state: any) => state.auth.modalOpen);
 
   return (
     <>

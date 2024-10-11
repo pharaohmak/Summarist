@@ -26,7 +26,7 @@ const Selected: React.FC = () => {
             setLoading(false);
         } catch (error) {
             console.error("Error fetching selected books:", error);
-            setLoading(false); // Even if there's an error, stop loading
+            setLoading(false);
         }
     }
 
@@ -39,9 +39,9 @@ const Selected: React.FC = () => {
             <>
                 <div className="for-you__title">Selected just for you</div>
                 <div className="skeleton__wrapper">
-                        <div className="skeleton__item">
-                            <div className="skeleton__image" style={{ height: 200, width: 600, minWidth: 180, marginBottom: 20, backgroundColor: "#ddd" }} />
-                        </div>
+                    <div className="skeleton__item">
+                        <div className="skeleton__image" style={{ height: 200, width: 600, minWidth: 180, marginBottom: 20, backgroundColor: "#ddd" }} />
+                    </div>
                 </div>
             </>
         );
@@ -58,7 +58,7 @@ const Selected: React.FC = () => {
                         <div className="selected__book--line"></div>
                         <div className="selected__book--content">
                             <figure className="book__image--wrapper" style={{ height: 140, width: 140, minWidth: 140 }}>
-                                <Image className="book__image" src={book.imageLink} alt={book.title} style={{ display: "block" }} width={100} height={100}/>
+                                <Image className="book__image" src={book.imageLink} alt={book.title} style={{ display: "block" }} width={100} height={100} />
                             </figure>
                             <div className="selected__book--text">
                                 <div className="selected__book--title">{book.title}</div>

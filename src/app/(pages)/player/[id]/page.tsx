@@ -29,7 +29,7 @@ const Player: NextPage = () => {
 
     useEffect(() => {
         const urlParts = window.location.pathname.split('/');
-        const id = urlParts[urlParts.length - 1]; // Assumes the ID is at the end of the URL
+        const id = urlParts[urlParts.length - 1];
         setBookId(id);
     }, []);
 

@@ -14,7 +14,7 @@ interface Book {
     audioLink: string;
     subTitle: string;
     averageRating: number;
-    subscriptionRequired: boolean; // Assuming this is the field for subscription status
+    subscriptionRequired: boolean;
 }
 
 const RecommendedBooks: React.FC<{ books: Book[] }> = () => {
@@ -46,11 +46,8 @@ const RecommendedBooks: React.FC<{ books: Book[] }> = () => {
                 <div className="row">
                     <div className="container">
                         <div className="for-you__wrapper">
-                            {/* Selected for You Section */}
                             <div className="for-you__title">Selected just for you</div>
                             <div className="selected__book--skeleton"></div>
-
-                            {/* Recommended For You Section */}
                             <div>
                                 <div className="for-you__title">Recommended For You</div>
                                 <div className="for-you__sub--title">We think you’ll like these</div>
@@ -80,7 +77,7 @@ const RecommendedBooks: React.FC<{ books: Book[] }> = () => {
                                         <div className="subscription-pill">Premium</div>
                                     )}
                                     <figure className="book__image--wrapper" style={{ marginBottom: "8px" }}>
-                                        <Image className="book__image" src={book.imageLink} alt="book" style={{ display: "block" }} width={100} height={100}/>
+                                        <Image className="book__image" src={book.imageLink} alt="book" style={{ display: "block" }} width={100} height={100} />
                                     </figure>
                                     <div className="recommended__book--title">{book.title}</div>
                                     <div className="recommended__book--author">{book.author}</div>

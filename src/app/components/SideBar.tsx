@@ -11,7 +11,6 @@ import { auth } from '@/firebase/init';
 import Modal from './Modal';
 import { fetchUserSuccess, userLogout } from '@/redux/userSlice';
 import { RootState, AppDispatch } from '@/redux/store';
-
 import SupportIcon from '../assets/icons/Support';
 import SettingsIcon from '../assets/icons/Settings';
 import Login from '../assets/icons/Login';
@@ -20,7 +19,6 @@ import Highlights from '../assets/icons/Highlights';
 import Library from '../assets/icons/Library';
 import Home from '../assets/icons/Home';
 
-// Define the prop types for SidebarLink
 interface SidebarLinkProps {
     href: string;
     icon: React.ReactNode;
@@ -29,7 +27,6 @@ interface SidebarLinkProps {
     onClick?: () => void;
 }
 
-// Functional component for SidebarLink using React.FC and the defined props
 const SidebarLink: React.FC<SidebarLinkProps> = ({ href, icon, text, disabled = false, onClick }) => (
     <Link
         href={disabled ? '#' : href}
@@ -51,11 +48,10 @@ const SideBar: React.FC = () => {
         const unsubscribe = onAuthStateChanged(auth, (user: FirebaseUser | null) => {
             if (user) {
                 const { uid, email } = user;
-                // Manually set a subscription status, or fetch from another source
                 dispatch(fetchUserSuccess({
-                    uid, 
+                    uid,
                     email: email ?? 'No email provided',
-                    subscriptionStatus: 'premium-plus', // Example static subscriptionStatus
+                    subscriptionStatus: 'premium-plus',
                 }));
                 setIsUserLoggedIn(true);
             } else {
@@ -64,7 +60,7 @@ const SideBar: React.FC = () => {
             }
         });
 
-        return () => unsubscribe(); // Cleanup on unmount
+        return () => unsubscribe();
     }, [dispatch]);
 
     const handleLogout = () => {

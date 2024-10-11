@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  User, 
-  signOut, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
-  sendPasswordResetEmail 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  User,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth } from '@/firebase/init';
 import { AppThunk } from './store';
@@ -53,9 +53,8 @@ const authSlice = createSlice({
   },
 });
 
-// Helper function to handle user authentication
 const handleUserAuth = async (
-  dispatch: (action: any) => void, 
+  dispatch: (action: any) => void,
   user: User
 ): Promise<void> => {
   dispatch(setUser(user));
@@ -63,7 +62,6 @@ const handleUserAuth = async (
   window.location.href = '/for-you';
 };
 
-// Thunk to register a new user
 export const registerUser = (email: string, password: string): AppThunk => async (dispatch) => {
   try {
     const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
@@ -77,7 +75,6 @@ export const registerUser = (email: string, password: string): AppThunk => async
   }
 };
 
-// Thunk for user login
 export const userLogin = (email: string, password: string): AppThunk => async (dispatch) => {
   try {
     const userCredentials = await signInWithEmailAndPassword(auth, email, password);
@@ -91,7 +88,6 @@ export const userLogin = (email: string, password: string): AppThunk => async (d
   }
 };
 
-// Guest login
 export const guestLogin = (): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
@@ -104,7 +100,6 @@ export const guestLogin = (): AppThunk => async (dispatch) => {
   }
 };
 
-// Google login
 export const googleLogin = (): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
@@ -118,7 +113,6 @@ export const googleLogin = (): AppThunk => async (dispatch) => {
   }
 };
 
-// Logout user
 export const logoutUser = (): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
@@ -131,7 +125,6 @@ export const logoutUser = (): AppThunk => async (dispatch) => {
   }
 };
 
-// Reset password
 export const resetPassword = (email: string): AppThunk => async (dispatch) => {
   dispatch(setLoading(true));
   try {
@@ -146,7 +139,6 @@ export const resetPassword = (email: string): AppThunk => async (dispatch) => {
   }
 };
 
-// Export actions and selectors
 export const { setUser, logout, toggleModal, setLoading, setError } = authSlice.actions;
 
 export const selectAuthState = (state: { auth: AuthState }) => ({

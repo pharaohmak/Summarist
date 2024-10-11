@@ -10,7 +10,6 @@ export const store = configureStore({
   },
 });
 
-// Typed versions for dispatch and getState to ensure type safety
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;

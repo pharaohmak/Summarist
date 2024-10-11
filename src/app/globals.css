@@ -80,10 +80,6 @@ input {
   min-width: 180px
 }
 
-.btn--checkout {
-  cursor: not-allowed;
-}
-
 .btn:hover:not(:disabled) {
   background-color: #20ba68
 }
@@ -152,7 +148,6 @@ input {
 .nav__list--login:hover {
   color: #2bd97c
 }
-
 
 .nav__list--login {
   cursor: pointer
@@ -712,8 +707,6 @@ input {
   }
 }
 
-
-
 .sidebar__overlay {
   position: fixed;
   top: 0;
@@ -870,8 +863,6 @@ input {
 .sidebar__font--size-icon--active {
   border-bottom: 3px solid #2bd97c
 }
-
-
 
 .sidebar--opened {
   transform: translateX(0);
@@ -1134,7 +1125,6 @@ input {
   width: 100%
 }
 
-
 .auth__wrapper {
   position: fixed;
   top: 0;
@@ -1338,8 +1328,6 @@ input {
 .for-you__recommended--books {
   display: flex;
   overflow-x: auto;
-  /* Enables horizontal scrolling */
-
 }
 
 .for-you__recommended--books::-webkit-scrollbar {
@@ -1355,8 +1343,6 @@ input {
   max-width: 200px;
   width: 100%
 }
-
-
 
 .for-you__recommended--books a:hover {
   background-color: #f1f6f4

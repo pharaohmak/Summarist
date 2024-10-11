@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth  } from '@/firebase/init';
+import { auth } from '@/firebase/init';
 import { onAuthStateChanged } from 'firebase/auth';
 import Image from 'next/image';
-
 import type { NextPage } from "next";
 
 interface BookData {
@@ -29,19 +28,22 @@ const InsideBook: NextPage = () => {
     const [user, setUser] = useState<any>(null);
     const [bookId, setBookId] = useState<string | null>(null);
 
+    // Get book ID from URL
     useEffect(() => {
         const pathSegments = window.location.pathname.split('/');
         const id = pathSegments[pathSegments.length - 1];
         setBookId(id);
     }, []);
 
+    // Fetch book data
     useEffect(() => {
         const fetchBookData = async () => {
             if (!bookId) return;
 
             try {
                 const response = await axios.get(`https://us-central1-summaristt.cloudfunctions.net/getBook?id=${bookId}`);
-                setBookData(response.data);
+                const fetchedData = response.data;
+                setBookData(fetchedData);
             } catch (err) {
                 setError('Failed to load book data: ' + err);
             } finally {
@@ -52,6 +54,7 @@ const InsideBook: NextPage = () => {
         fetchBookData();
     }, [bookId]);
 
+    // Check auth status
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user: any) => {
             setUser(user || null);
@@ -60,39 +63,22 @@ const InsideBook: NextPage = () => {
         return () => unsubscribe();
     }, []);
 
+    // Handle reading or listening
     const handleReadOrListen = () => {
         if (!user) {
             alert('Please log in to continue');
             return;
         }
 
-        if (bookData?.subscriptionRequired && !user?.subscriptionStatus) {
+        // Ensure user subscription status exists before checking
+        const hasSubscription = user?.subscriptionStatus === 'active';
+
+        if (bookData?.subscriptionRequired && !hasSubscription) {
             window.location.href = '/choose-plan';
         } else {
             window.location.href = `/player/${bookId}`;
         }
     };
-
-    // const handleAddToLibrary = async () => {
-    //     if (!user) {
-    //         alert('Please log in to add to your library');
-    //         return;
-    //     }
-
-    //     try {
-    //         const book = {
-    //             title: bookData?.title || "Unknown Title",
-    //             author: bookData?.author || "Unknown Author",
-    //         };
-
-    //         const libraryRef = collection(db, 'users', user.uid, 'library');
-    //         await addDoc(libraryRef, book);
-    //         alert('Book added to your library!');
-    //     } catch (error) {
-    //         console.error('Error adding book to library:', error);
-    //         alert('Failed to add the book to your library. Please try again.');
-    //     }
-    // };
 
     if (loading) return <div>Loading book data...</div>;
     if (error) return <div className="error-message">{error}</div>;
@@ -100,7 +86,12 @@ const InsideBook: NextPage = () => {
     return (
         <div className="inner__wrapper">
             <div className="inner__book">
-                <h1 className="inner-book__title">{bookData?.title || 'Unknown Title'}</h1>
+                <h1 className="inner-book__title">
+                    {bookData?.title || 'Unknown Title'}
+                    {bookData?.subscriptionRequired && (
+                        <span> (Premium)</span>
+                    )}
+                </h1>
                 <h2 className="inner-book__author">{bookData?.author || 'Unknown Author'}</h2>
                 <h3 className="inner-book__sub--title">{bookData?.subTitle || 'No Subtitle'}</h3>
                 <div className="inner-book__wrapper">
@@ -160,6 +151,6 @@ const InsideBook: NextPage = () => {
             </div>
         </div>
     );
-}
+};
 
 export default InsideBook;

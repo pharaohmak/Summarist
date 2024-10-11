@@ -2,7 +2,6 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/firebase/init';
 
-// Define User State Interface
 interface UserState {
   uid: string | null;
   email: string;
@@ -12,7 +11,6 @@ interface UserState {
   isAuthenticated: boolean;
 }
 
-// Initial State
 const initialState: UserState = {
   uid: null,
   email: '',
@@ -22,7 +20,6 @@ const initialState: UserState = {
   isAuthenticated: false,
 };
 
-// Define the user slice
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -32,19 +29,19 @@ const userSlice = createSlice({
       state.error = null;
     },
     fetchUserSuccess: (
-      state, 
+      state,
       action: PayloadAction<{ uid: string; email: string; subscriptionStatus: string }>
     ) => {
       state.uid = action.payload.uid;
       state.email = action.payload.email;
       state.subscriptionStatus = action.payload.subscriptionStatus;
       state.loading = false;
-      state.isAuthenticated = true; // User is authenticated after fetching success
+      state.isAuthenticated = true;
     },
     fetchUserFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
-      state.isAuthenticated = false; // Failure means no authenticated user
+      state.isAuthenticated = false;
     },
     userLogout: (state) => {
       state.uid = null;
@@ -52,7 +49,7 @@ const userSlice = createSlice({
       state.subscriptionStatus = '';
       state.loading = false;
       state.error = null;
-      state.isAuthenticated = false; // User is logged out
+      state.isAuthenticated = false;
     },
     updateSubscriptionStatus: (state, action: PayloadAction<string>) => {
       state.subscriptionStatus = action.payload;
@@ -60,7 +57,6 @@ const userSlice = createSlice({
   },
 });
 
-// Async thunk to fetch user data from Firebase
 export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (_, { dispatch }) => {
@@ -68,20 +64,19 @@ export const fetchUser = createAsyncThunk(
     try {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
-          // Set subscription status dynamically based on email or other criteria
-          const subscriptionStatus = user.email?.startsWith('guest') ? 'Free' : 'Premium'; // Update this logic based on actual subscription data
-          
+          const subscriptionStatus = user.email?.startsWith('guest') ? 'Free' : 'Premium';
+
           dispatch(fetchUserSuccess({
             uid: user.uid,
             email: user.email || '',
             subscriptionStatus
           }));
         } else {
-          dispatch(userLogout()); // No user means logout
+          dispatch(userLogout());
         }
       });
 
-      return unsubscribe; // Cleanup listener when done
+      return unsubscribe;
     } catch (error) {
       if (error instanceof Error) {
         dispatch(fetchUserFailure('Failed to load user data: ' + error.message));
@@ -92,7 +87,6 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
-// Export Actions and Reducer
 export const { fetchUserStart, fetchUserSuccess, fetchUserFailure, userLogout, updateSubscriptionStatus } = userSlice.actions;
 export const selectUserState = (state: { user: UserState }) => state.user;
 export default userSlice.reducer;

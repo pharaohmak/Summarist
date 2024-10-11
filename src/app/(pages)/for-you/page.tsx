@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch } from "@/redux/store"; // Adjust the path if necessary
-import { fetchUserSuccess, userLogout } from "@/redux/userSlice"; // Import the necessary actions
-import { onAuthStateChanged } from "firebase/auth"; // Import Firebase auth
-import { auth } from "@/firebase/init"; // Import your Firebase auth instance
+import { useAppSelector, useAppDispatch } from "@/redux/store";
+import { fetchUserSuccess, userLogout } from "@/redux/userSlice";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/firebase/init";
 import LoginWrapper from "@/app/components/LoginWrapper";
 import { NextPage } from "next";
 import Selected from "@/app/components/for-you/Selected";
@@ -13,17 +13,16 @@ import SuggestedBooks from "@/app/components/for-you/Suggested";
 
 const ForYou: NextPage = () => {
     const dispatch = useAppDispatch();
-    const [isLoading, setIsLoading] = useState(true); // Loading state
+    const [isLoading, setIsLoading] = useState(true);
 
     // Access state from user slice
     const email = useAppSelector((state) => state.user.email);
     const loading = useAppSelector((state) => state.user.loading);
-    const isAuthenticated = !!email; // Check if user is authenticated
+    const isAuthenticated = !!email;
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Fetch user data or update state accordingly
                 dispatch(fetchUserSuccess({
                     email: user.email || '', subscriptionStatus: 'premium-plus',
                     uid: ""
@@ -31,10 +30,10 @@ const ForYou: NextPage = () => {
             } else {
                 dispatch(userLogout());
             }
-            setIsLoading(false); // Stop loading after the auth check
+            setIsLoading(false);
         });
 
-        return () => unsubscribe(); // Cleanup the listener
+        return () => unsubscribe();
     }, [dispatch]);
 
     if (isLoading || loading) {
@@ -42,11 +41,8 @@ const ForYou: NextPage = () => {
             <div className="container">
                 <div className="row">
                     <div className="for-you__wrapper">
-                        {/* Selected for You Section */}
                         <div className="for-you__title">Selected just for you</div>
                         <div className="selected__book--skeleton"></div>
-
-                        {/* Recommended For You Section */}
                         <div>
                             <div className="for-you__title">Recommended For You</div>
                             <div className="for-you__sub--title">We think you’ll like these</div>
@@ -80,8 +76,6 @@ const ForYou: NextPage = () => {
                     </div>
                 </div>
             </div>
-
-
         )
     }
 

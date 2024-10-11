@@ -1,8 +1,6 @@
 "use client";
 
-// import Image from 'next/image';
 import React, { useEffect, useState, useCallback } from 'react';
-// import google from "../assets/google.png";
 import { useDispatch } from 'react-redux';
 import { guestLogin, registerUser, resetPassword, toggleModal, userLogin, } from '@/redux/authSlice';
 import { AppDispatch } from '@/redux/store'; // Ensure type safety for dispatch and RootState
@@ -13,24 +11,18 @@ const Modal: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-    // Access user and error state with proper typing
-
-    // Clear error on modal open/close or mode switch
     useEffect(() => {
     }, [isSignUp, dispatch]);
 
-    // Callback to handle form submit
     const handleFormSubmit = useCallback(
         (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
 
-            // Simple validation for empty fields
             if (!email || !password) {
                 alert('Please fill in all fields.');
                 return;
             }
 
-            // Dispatch appropriate actions for login or sign-up based on the isSignUp state
             if (isSignUp) {
                 dispatch(registerUser(email, password));
             } else {
