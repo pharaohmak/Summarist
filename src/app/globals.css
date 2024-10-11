@@ -2331,3 +2331,10 @@ input {
 .btn--upgrade {
   width: 48px;
 }
+
+.checkout--wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
