@@ -7,9 +7,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/init";
 import LoginWrapper from "@/app/components/LoginWrapper";
 import { NextPage } from "next";
-import Selected from "@/app/components/for-you/Selected";
-import RecommendedBooks from "@/app/components/for-you/Recommended";
-import SuggestedBooks from "@/app/components/for-you/Suggested";
+import Selected from "@/app/components/books/Selected";
+import RecommendedBooks from "@/app/components/books/Recommended";
+import SuggestedBooks from "@/app/components/books/Suggested";
 
 const ForYou: NextPage = () => {
     const dispatch = useAppDispatch();
