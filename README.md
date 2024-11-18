@@ -10,11 +10,9 @@ Summarist is a fully responsive, feature-packed web application that offers a se
 - **Debounced Search**: Implemented a high-performance search bar with a 300ms debounce, reducing API calls and improving efficiency.
 - **Skeleton Loaders**: Improves user experience by showing loading placeholders while data is fetched.
 - **Audio Player**: Built a custom audio player with intuitive controls, including play, pause, skip, and drag-to-seek functionality.
-- **Premium Features**: Differentiates between free and premium books, ensuring smooth access control based on user subscription status.
 - **API-Driven Content**: Dynamically fetches book data using REST APIs for various sections like "For You" and individual book pages.
 
 ## Technologies Used
-The project was developed using:
 - **Next.js** (Framework)
 - **TypeScript** (Static Typing)
 - **Firebase** (Authentication & Firestore for backend)
@@ -24,7 +22,6 @@ The project was developed using:
 - **Vercel** (Deployment)
 
 ## Features
-Summarist includes the following key features:
 - **User Authentication**: Comprehensive authentication system with email/password login, Google login, guest access, and password reset.
 - **Audio Player**: Interactive audio player with essential controls for book summaries.
 - **Subscription and Payments**: Stripe integration for subscription management, including monthly and yearly plans.
