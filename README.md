@@ -1,28 +1,42 @@
-# Summarist
+# 📖 Summarist
 
-Summarist is a fully responsive, feature-packed web application that offers a seamless user experience for book summaries, audio players, and subscription management. This project was built with modern frameworks and best practices, emphasizing scalable code, performance, and user-centric design.
+**Summarist** is a fully responsive, feature-rich web application for accessing book summaries, audio content, and subscription-based features. Built with modern frameworks like **Next.js** and **TypeScript**, it prioritizes performance, user experience, and scalable architecture.
 
-## Project Highlights
-- **Responsive Design**: The application is optimized for all screen sizes, ensuring seamless usability across devices.
-- **Dynamic Routing**: Utilizes Next.js's powerful routing capabilities to implement dynamic pages for books and audio players.
-- **Global State Management**: Efficient state handling using Redux Toolkit to manage authentication, modals, and other app-wide states.
-- **Secure Payments**: Stripe integration to handle monthly and yearly subscriptions with a 7-day free trial for annual plans.
-- **Debounced Search**: Implemented a high-performance search bar with a 300ms debounce, reducing API calls and improving efficiency.
-- **Skeleton Loaders**: Improves user experience by showing loading placeholders while data is fetched.
-- **Audio Player**: Built a custom audio player with intuitive controls, including play, pause, skip, and drag-to-seek functionality.
-- **API-Driven Content**: Dynamically fetches book data using REST APIs for various sections like "For You" and individual book pages.
+## 🚀 Features
 
-## Technologies Used
-- **Next.js** (Framework)
-- **TypeScript** (Static Typing)
-- **Firebase** (Authentication & Firestore for backend)
-- **Stripe** (Payment integration via Firebase extension)
-- **Redux Toolkit** (State Management)
-- **React Icons** (Iconography)
-- **Vercel** (Deployment)
+- 🔐 **User Authentication** – Secure login via email/password, Google, guest access, and password reset using Firebase.
+- 🎧 **Custom Audio Player** – Built-in player with intuitive controls: play, pause, skip, and seek functionality.
+- 💳 **Subscriptions & Payments** – Stripe integration supporting monthly and yearly plans, including a 7-day trial.
+- 🔎 **Advanced Search** – Debounced search bar with 300ms delay to reduce API load and enhance UX.
+- 📘 **Dynamic Book Pages** – Content-rich pages powered by dynamic routes in Next.js.
+- 🧠 **Global State Management** – Redux Toolkit for efficient handling of authentication, modals, and more.
+- ⏳ **Skeleton Loaders** – Loading placeholders for a polished, fast-feeling experience.
+- 🌐 **API-Driven Content** – REST API integration for curated book lists and individual summaries.
+- 📱 **Responsive Design** – Optimized for seamless interaction across all devices.
 
-## Features
-- **User Authentication**: Comprehensive authentication system with email/password login, Google login, guest access, and password reset.
-- **Audio Player**: Interactive audio player with essential controls for book summaries.
-- **Subscription and Payments**: Stripe integration for subscription management, including monthly and yearly plans.
-- **Search Functionality**: Advanced search with debounce for efficient book lookups.
+## 🧰 Tech Stack
+
+| Category         | Technologies                             |
+|------------------|------------------------------------------|
+| **Framework**     | Next.js (React)                          |
+| **Language**      | TypeScript                               |
+| **Auth & DB**     | Firebase (Auth & Firestore)              |
+| **Payments**      | Stripe (via Firebase extension)          |
+| **State Management** | Redux Toolkit                       |
+| **Icons**         | React Icons                              |
+| **Deployment**    | Vercel                                   |
+
+## 📸 Screenshots
+
+<!-- Optional: Add screenshots -->
+<!-- ![Screenshot 1](./screenshots/home.png) -->
+
+## 📦 Installation
+
+To run this project locally:
+
+```bash
+git clone https://github.com/your-username/summarist.git
+cd summarist
+npm install
+npm run dev
