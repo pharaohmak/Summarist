@@ -29,7 +29,7 @@
 ## 📸 Screenshots
 
 <!-- Optional: Add screenshots -->
-<!-- ![Screenshot 1](./screenshots/home.png) -->
+![Screenshot 1](./Summarist.png)
 
 ## 📦 Installation
 
