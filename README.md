@@ -36,7 +36,8 @@
 To run this project locally:
 
 ```bash
-git clone https://github.com/your-username/summarist.git
-cd summarist
+```bash
+git clone https://github.com/pharaohmak/Summarist.git
+cd Summarist
 npm install
 npm run dev
